@@ -452,35 +452,37 @@ class BookwalkerScheduler:
         # TODO: Extract book_id from URL and scrape
         pass
 
+
+
 # =============================================================================
 # UTILITY FUNCTIONS
 # =============================================================================
 
-    def calculate_next_review(book: Book) -> Optional[datetime]:
-        """
-        Parses tags to find the end-date of a sale or a release date.
-        Returns the date as a datetime object, or None if no date found.
-        """
-        current_year = datetime.now().year
+def calculate_next_review(book: Book) -> Optional[datetime]:
+    """
+    Parses tags to find the end-date of a sale or a release date.
+    Returns the date as a datetime object, or None if no date found.
+    """
+    current_year = datetime.now().year
         
-        for tag in book.tags:
-            # Regex looks for patterns like 6/4 or 5/28
-            match = re.search(r'(\d+)/(\d+)', tag)
-            if match:
-                month, day = int(match.group(1)), int(match.group(2))
-                
-                # Create a prospective date
-                target_date = datetime(current_year, month, day)
-                
-                # Safety: If the date is in the past (e.g., scraping in Jan, date is Dec), 
-                # assume it's for the next year.
-                if target_date < datetime.now().replace(hour=0, minute=0, second=0, microsecond=0):
-                    target_date = target_date.replace(year=current_year + 1)
+    for tag in book.tags:
+        # Regex looks for patterns like 6/4 or 5/28
+        match = re.search(r'(\d+)/(\d+)', tag)
+        if match:
+            month, day = int(match.group(1)), int(match.group(2))
+            
+            # Create a prospective date
+            target_date = datetime(current_year, month, day)
+            
+            # Safety: If the date is in the past (e.g., scraping in Jan, date is Dec), 
+            # assume it's for the next year.
+            if target_date < datetime.now().replace(hour=0, minute=0, second=0, microsecond=0):
+                target_date = target_date.replace(year=current_year + 1)
                     
-                return target_date
+            return target_date
                 
         return None
-
+    
 # =============================================================================
 # ENTRY POINT
 # =============================================================================
@@ -491,3 +493,4 @@ if __name__ == "__main__":
     
     # Test run
     scheduler.run_daily_scrape()
+
